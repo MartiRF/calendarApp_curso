@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { addHours, differenceInSeconds } from 'date-fns';
 
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css'
 import Modal from 'react-modal';
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
+
+import { useUiStore } from '../../hooks';
 
 registerLocale('es', es)
 
@@ -23,18 +27,32 @@ Modal.setAppElement('#root');
 
 export const CandedarModal = () => {
 
-    const [isModalOpen, setIsModalOpen] = useState(true)
+  const { isDateModalOpen, closeDateModal } = useUiStore()
+  
+  const [formSubmitted, setFormSubmitted] = useState(false)
+  
+  const [formValues, setFormValues] = useState({
+    title:'Marticinto',
+    notes:'Drogas and Music',
+    start: new Date(),
+    end: addHours( new Date(), 2),
+  })
+  
+  const onCloseModal = () => {
+    closeDateModal()
+  }
 
-    const onCloseModal = () => {
-        setIsModalOpen(false)
-    }
+  const tittleClass = useMemo(() => {
+    if (!formSubmitted) return '';
 
-    const [formValues, setFormValues] = useState({
-      title:'Marticinto',
-      notes:'Drogas and Music',
-      start: new Date(),
-      end: addHours( new Date(), 2),
-    })
+    return (formValues.title.length > 0)
+      ?
+      'is-valid'
+      :
+      'is-invalid'
+
+  }, [formValues.title, formSubmitted])
+
 
     const onInputChange = ({target}) => {
       setFormValues({
@@ -51,9 +69,13 @@ export const CandedarModal = () => {
 
     const onSumit = (event) => {
       event.preventDefault()
+      setFormSubmitted(true)
       const difference = differenceInSeconds( formValues.end, formValues.start)
       
-      if(isNaN(difference) || difference <= 0) return;
+      if(isNaN(difference) || difference <= 0) {
+        Swal.fire('Fechas incorrectas','Error fechas','error')
+        return;
+      };
 
       if(formValues.title.length === 0) return
 
@@ -67,7 +89,7 @@ export const CandedarModal = () => {
     }
   return (
     <Modal
-        isOpen={ isModalOpen }
+        isOpen={ isDateModalOpen }
         onRequestClose={onCloseModal}
         style={customStyles}  
         className='modal'
@@ -110,7 +132,7 @@ export const CandedarModal = () => {
               <label>Titulo y notas</label>
               <input 
                   type="text" 
-                  className="form-control"
+                  className={`form-control ${ tittleClass }`}
                   placeholder="Título del evento"
                   name="title"
                   autoComplete="off"
