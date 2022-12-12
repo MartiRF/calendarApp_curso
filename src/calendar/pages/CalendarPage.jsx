@@ -3,29 +3,18 @@ import React, { useState } from 'react'
 import { Calendar } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
-
-import { addHours } from 'date-fns'
 import { Navbar, CalendarBox, CandedarModal } from '../components/'
 
 import { localizer, getMessageES } from '../../helpers/'
-import { useUiStore } from '../../hooks'
+import { useCalendarStore, useUiStore } from '../../hooks'
 
 
-const events = [{
-  title:'Cumplea;os del minino',
-  notes:'comprar pasetel',
-  start: new Date(),
-  end: addHours(new Date(), 2),
-  bgColor: '#fafafa',
-  user:{
-    _id:123,
-    name:'martincito'
-  }
-}]
+
 
 export const CalendarPage = () => {
   
   const { openDateModal } = useUiStore()
+  const { events, setActiveEvent } = useCalendarStore()
 
   const [lasView, setLasView] = useState(localStorage.getItem('lastView') || 'week')
 
@@ -46,10 +35,12 @@ export const CalendarPage = () => {
     openDateModal();
   }
 
+  // Cuando seleciono un evento
   const onSelect = (event) => {
-    console.log({click: event})
+    setActiveEvent(event)
   }
 
+  // Guarda la ultima vista
   const onViewChanged = (event) => {
     localStorage.setItem('lastView', `${event}`);
   }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { addHours, differenceInSeconds } from 'date-fns';
 
 import Swal from 'sweetalert2';
@@ -8,7 +8,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
 
-import { useUiStore } from '../../hooks';
+import { useCalendarStore, useUiStore } from '../../hooks';
 
 registerLocale('es', es)
 
@@ -26,6 +26,8 @@ const customStyles = {
 Modal.setAppElement('#root');
 
 export const CandedarModal = () => {
+
+  const { activeEvent } = useCalendarStore()
 
   const { isDateModalOpen, closeDateModal } = useUiStore()
   
@@ -53,7 +55,14 @@ export const CandedarModal = () => {
 
   }, [formValues.title, formSubmitted])
 
-
+  useEffect(() => {
+    if(activeEvent !== null){
+      // const {title,notes,start,end} = activeEvent
+      setFormValues({ ...activeEvent })
+    }
+  }, [activeEvent])
+  
+  
     const onInputChange = ({target}) => {
       setFormValues({
         ...formValues,
