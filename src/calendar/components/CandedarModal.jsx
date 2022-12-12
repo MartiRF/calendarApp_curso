@@ -27,12 +27,10 @@ Modal.setAppElement('#root');
 
 export const CandedarModal = () => {
 
-  const { activeEvent } = useCalendarStore()
-
+  const { activeEvent,startSavingEvent } = useCalendarStore()
   const { isDateModalOpen, closeDateModal } = useUiStore()
-  
+
   const [formSubmitted, setFormSubmitted] = useState(false)
-  
   const [formValues, setFormValues] = useState({
     title:'Marticinto',
     notes:'Drogas and Music',
@@ -76,7 +74,7 @@ export const CandedarModal = () => {
       })
     }
 
-    const onSumit = (event) => {
+    const onSumit = async(event) => {
       event.preventDefault()
       setFormSubmitted(true)
       const difference = differenceInSeconds( formValues.end, formValues.start)
@@ -88,12 +86,10 @@ export const CandedarModal = () => {
 
       if(formValues.title.length === 0) return
 
-      console.log(formValues)
       // TODO
-      /*
-        -Cerrar modal
-        -Remover errores en pantalla
-      */ 
+      await startSavingEvent(formValues);
+      closeDateModal()
+      setFormSubmitted(false)
 
     }
   return (

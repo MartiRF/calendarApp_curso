@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Calendar } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
-import { Navbar, CalendarBox, CandedarModal } from '../components/'
+import { Navbar, CalendarBox, CandedarModal, FabAddNew, FabDelete } from '../components/'
 
 import { localizer, getMessageES } from '../../helpers/'
 import { useCalendarStore, useUiStore } from '../../hooks'
@@ -66,6 +66,8 @@ export const CalendarPage = () => {
       onView={onViewChanged}
       />
       <CandedarModal />
+      <FabAddNew />
+      <FabDelete />
     </>
   )
 }
